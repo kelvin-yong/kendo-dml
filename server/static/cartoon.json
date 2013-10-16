@@ -1,0 +1,20 @@
+[
+    {
+        "rank": 1,
+        "rating": 8.3,
+        "year": 2004,
+        "title": "The Incredibles"
+    },
+    {
+        "rank": 2,
+        "rating": 8.2,
+        "year": 2003,
+        "title": "Finding Nemo"
+    },
+    {
+        "rank": 3,
+        "rating": 8,
+        "year": 2006,
+        "title": "Monster Inc"
+    }
+]

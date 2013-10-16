@@ -1,0 +1,110 @@
+<!--
+mvvm03.html
+MVVM: Live Data and deleting
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>MVVM Demo 3</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="MVVM Demo 3" data-layout="main-layout" data-model="viewModel">
+    <table>
+        <caption data-bind="text: dataTitle"></caption>
+        <thead>
+        <!-- updated the table headers -->
+        <tr>
+            <th>Name</th>
+            <th>Hair Color</th>
+            <th>Favorite Food</th>
+            <th></th>
+            <th>Live Data</th>
+        </tr>
+        </thead>
+        <tbody data-template="row-template1" data-bind="source: people"></tbody>
+    </table>
+    <hr/>
+    <form>
+        <header>Add a Person</header>
+        <input type="text" name="personName" placeholder="Name" data-bind="value: personName" /><br />
+        <input type="text" name="personHairColor" placeholder="Hair Color" data-bind="value: personHairColor" /><br />
+        <input type="text" name="personFavFood" placeholder="Favorite Food" data-bind="value: personFavFood" /><br />
+        <button type="button" data-bind="click: addPerson">Add</button>
+    </form>
+</div>
+
+<script id="row-template1" type="text/x-kendo-template">
+    <tr>
+        <!-- the data binding is now different -->
+        <td><input type="text" data-bind="value: name" /></td>
+        <td><input type="text" data-bind="value: hairColor" /></td>
+        <td><input type="text" data-bind="value: favoriteFood" /></td>
+        <td><button type="button" data-bind="click: deletePerson">Delete</button></td>
+        <td><span data-bind="text: name"></span>&nbsp;-&nbsp;
+            <span data-bind="text: hairColor"></span>&nbsp;-&nbsp;
+            <span data-bind="text: favoriteFood"></span>
+        </td>
+    </tr>
+</script>
+
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+
+    // create the viewModel
+    var viewModel = kendo.observable({
+        dataTitle: "My friends",
+        people:[
+            {name: "John", hairColor: "Gray", favoriteFood: "Burger"},
+            {name: "Bryan", hairColor: "Brown", favoriteFood: "Steak"},
+            {name: "Jennifer", hairColor: "Brown", favoriteFood: "Salad"}
+        ],
+
+        // variables for the form field
+        personName: "",
+        personHairColor: "",
+        personFavFood: "",
+
+        // function for adding the person
+        addPerson: function () {
+            this.get("people").push({
+                name: this.get("personName"),
+                hairColor: this.get("personHairColor"),
+                favoriteFood: this.get("personFavFood")
+            });
+            this.set("personName", "");
+            this.set("personHairColor", "");
+            this.set("personFavFood", "");
+        },
+
+        // new function for deleting a person
+        deletePerson: function (e) {
+            var person = e.data;
+            var people = this.get("people");
+            var index = people.indexOf(person);
+            people.splice(index, 1);
+        }
+    });
+    console.log("viewModel instanceof kendo.data.ObservableObject -", viewModel instanceof kendo.data.ObservableObject);
+    console.log("viewModel.people instanceof kendo.data.ObservableObject -", viewModel.people instanceof kendo.data.ObservableObject);
+    console.log("viewModel.people instanceof kendo.data.ObservableArray -", viewModel.people instanceof kendo.data.ObservableArray);
+    console.log("viewModel.people[0] instanceof kendo.data.ObservableObject -", viewModel.people[0] instanceof kendo.data.ObservableObject);
+</script>
+
+</body>
+</html>

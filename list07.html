@@ -1,0 +1,74 @@
+<!--
+list07.html
+Endless scrolling example, remote data
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>ListView Demo 7</title>
+</head>
+<body>
+
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+            <a class="nav-button" data-align="right" data-role="button" data-icon="refresh"></a>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" data-title="ListView Demo 7" data-layout="main-layout">
+    <ul data-role="listview" data-source="foo" data-endless-scroll="true" data-template="foo-template" data-item-change="itemChange">
+    </ul>
+</div>
+<script type="text/x-kendo-template" id="foo-template">
+    #: name # - #: (new Date(get("modified"))).toString()#
+</script>
+
+<script>
+    var pageSize = 50, totalRecords = 280;
+    var baseServiceURL = "http://localhost:7100/";
+
+    var foo = new kendo.data.DataSource({
+        transport: {
+            read: function(options) {
+                console.log(options.data);
+                var params = {
+                    skip: options.data.skip,
+                    pageSize: options.data.pageSize,
+                    slow: false
+                };
+                $.ajax({
+                    type: "POST",
+                    url: baseServiceURL + "endless",
+                    dataType: "json",
+                    data: params,
+                    success: function(result) {
+                        options.success(result);
+                    }
+                });
+            }
+        },
+
+        pageSize: pageSize,
+        serverPaging: true,
+        schema: {
+            total: function() { return totalRecords; }
+        }
+    });
+
+    function itemChange(e) {
+        //console.log(e);
+    }
+
+    new kendo.mobile.Application();
+</script>
+
+</body>
+</html>

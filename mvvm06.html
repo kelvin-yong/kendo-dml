@@ -1,0 +1,175 @@
+<!--
+mvvm06.html
+MVVM: Combining Datasource with View Model
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>MVVM Demo 6</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="MVVM Demo 6" data-layout="main-layout" data-model="viewModel">
+    <table id="products">
+        <caption data-bind="text: dataTitle"></caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Units</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody data-template="row-template" data-bind="source: productsSource.view"></tbody>
+        <tfoot data-template="footer-template" data-bind="source: this"></tfoot>
+    </table>
+    <a data-role="button" data-bind="click: saveToServer">Sync To Server</a>
+    <a data-role="button" data-bind="click: resetServer">Reset Server Data</a>
+    <div data-bind="text: statusMessage"></div>
+</div>
+
+<script id="row-template" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td>#: kendo.toString(get("price"), "C") #</td>
+        <td><input data-bind="value: stock"></td>
+        <td><button data-bind="click: deleteProduct">Delete</button></td>
+    </tr>
+</script>
+
+<script id="footer-template" type="text/x-kendo-template">
+    <tr>
+        <td colspan="4">
+            Products count: #: total() #
+            Total price: #: kendo.toString(totalPrice(), "C") #
+            Units in stock: #: totalUnitsInStock() #
+        </td>
+    </tr>
+</script>
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+    var baseServiceURL = "http://localhost:7100/";
+
+    var viewModel = kendo.observable({
+        dataTitle: "Products Catalogue",
+        statusMessage: "",
+
+        products: [],
+
+        productsSource: new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: baseServiceURL + "products",
+                    dataType: "json"
+                },
+                update: {
+                    type: "POST",
+                    url: baseServiceURL + "products/update",
+                    dataType: "json"
+                },                destroy: {
+                    type: "POST",
+                    url: baseServiceURL + "products/destroy",
+                    dataType: "json"
+                }
+            },
+
+            // if you set this equals to true, the changes are sent in one request instead of multiple
+            batch: true,
+
+            // schema is important. if you omit it, the update and destroy function will not be called.
+            schema: {
+                model: {
+                    id: "pid"
+                }
+            },
+
+            // events
+            change: function(e) {
+                var items = this.view();
+                console.log("Changed: " + items.length + " items");
+
+                // setting products will cause the footer template to update
+                // since the footer data is dependent on the object products
+                viewModel.set("products", items);
+            },
+
+            error: function(e) {
+                console.log("Request has error");
+                viewModel.set("statusMessage", "Cannot sync/read from server");
+            },
+
+            requestStart: function(e) {
+                console.log("Request started");
+            },
+
+            requestEnd: function(e) {
+                console.log("Request ended");
+                viewModel.set("statusMessage", "OK");
+                setTimeout(function(){
+                    viewModel.set("statusMessage", "");
+                }, 2000);
+            }
+        }),
+
+        resetServer: function() {
+            console.log("Saving to server");
+            this.productsSource.read({reset: true});
+        },
+
+        saveToServer: function() {
+            console.log("Saving to server");
+            this.productsSource.sync();
+        },
+
+        deleteProduct: function(e) {
+            // the current data item (product) is passed as the "data" field of the event argument
+            console.log('Deleting');
+            var product = e.data;
+
+            // removing the item from datasource will trigger the the datasource's change function
+            this.productsSource.remove(product);
+        },
+
+        // for bottom footer
+        total: function() {
+            return this.get("products").length;
+        },
+
+        totalPrice: function() {
+            var sum = 0;
+            $.each(this.get("products"), function(index, product) {
+                sum += parseInt(product.price) * parseInt(product.stock);
+            });
+            return sum;
+        },
+
+        totalUnitsInStock: function() {
+            var sum = 0;
+            $.each(this.get("products"), function(index, product) {
+                sum += parseInt(product.stock);
+            });
+            return sum;
+        }
+    });
+
+    viewModel.productsSource.read();
+</script>
+
+</body>
+</html>

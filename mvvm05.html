@@ -1,0 +1,109 @@
+<!--
+mvvm05.html
+MVVM: Example of multiple templates
+Credit: http://demos.kendoui.com/web/mvvm/source.html
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>MVVM Demo 5</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="MVVM Demo 5" data-layout="main-layout" data-model="viewModel">
+    <table>
+        <caption data-bind="text: dataTitle"></caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Units</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody data-template="row-template" data-bind="source: products"></tbody>
+        <tfoot data-template="footer-template" data-bind="source: this"></tfoot>
+    </table>
+</div>
+
+<script id="row-template" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td>#: kendo.toString(get("price"), "C") #</td>
+        <td><input data-bind="value: unitsInStock"></td>
+        <td><button data-bind="click: deleteProduct">Delete</button></td>
+    </tr>
+</script>
+
+<script id="footer-template" type="text/x-kendo-template">
+    <tr>
+        <td colspan="4">
+            Products count: #: total() #
+            Total price: #: kendo.toString(totalPrice(), "C") #
+            Units in stock: #: totalUnitsInStock() #
+        </td>
+    </tr>
+</script>
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+
+    var viewModel = kendo.observable({
+        dataTitle: "Products Catalogue",
+
+        products: [
+            { name: "Hampton Sofa", price: 989.99, unitsInStock: 39 },
+            { name: "Perry Sofa", price: 559.99, unitsInStock: 17 },
+            { name: "Donovan Sofa", price: 719.99, unitsInStock: 29 },
+            { name: "Markus Sofa", price: 839.99, unitsInStock: 3 }
+        ],
+
+        deleteProduct: function(e) {
+            // the current data item (product) is passed as the "data" field of the event argument
+            var product = e.data;
+            var products = this.get("products");
+            var index = products.indexOf(product);
+            // remove the product by using the splice method
+            products.splice(index, 1);
+        },
+
+        // for bottom footer
+        total: function() {
+            return this.get("products").length;
+        },
+
+        totalPrice: function() {
+            var sum = 0;
+            $.each(this.get("products"), function(index, product) {
+                sum += parseInt(product.price) * parseInt(product.unitsInStock);
+            });
+            return sum;
+        },
+
+        totalUnitsInStock: function() {
+            var sum = 0;
+            $.each(this.get("products"), function(index, product) {
+                sum += parseInt(product.unitsInStock);
+            });
+            return sum;
+        }
+
+    });
+</script>
+
+</body>
+</html>

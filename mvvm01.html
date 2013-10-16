@@ -1,0 +1,93 @@
+<!--
+mvvm01.html - Simple Data Binding
+This demo shows the basic features of MVVM.
+We are using data-bind:text and source
+For source bindings, please see
+http://docs.kendoui.com/getting-started/framework/mvvm/bindings/source
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>MVVM Demo 1</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="MVVM Demo 1" data-layout="main-layout" data-model="viewModel">
+    <table>
+        <caption data-bind="text: dataTitle"></caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Hair Color</th>
+            <th>Favorite Food</th>
+        </tr>
+        </thead>
+        <!--
+            You can either use template1 or template2. They give almost identical results,
+            except that for template2, an error is thrown if favouriteFood is not defined
+        -->
+        <tbody data-template="row-template1" data-bind="source: people"></tbody>
+    </table>
+</div>
+
+<script id="row-template1" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: hairColor"></td>
+        <td data-bind="text: favoriteFood"></td>
+    </tr>
+</script>
+
+<script id="row-template2" type="text/x-kendo-template">
+    <tr>
+        <td>#=name#</td>
+        <td>#=hairColor#</td>
+        <td>#=favoriteFood#</td>
+    </tr>
+</script>
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+
+    // create the viewModel
+    var viewModel = kendo.observable({
+        dataTitle: "My friends",
+        people:[
+            {name: "John", hairColor: "Gray", favoriteFood: "Burger"},
+            {name: "Bryan", hairColor: "Brown", favoriteFood: "Steak"},
+            {name: "Jennifer", hairColor: "Brown", favoriteFood: "Salad"}
+        ]
+    });
+
+    // Bind the view model to the view.
+    // I prefer to use the declarative method via data-model, so the next line below is not necessary
+    // kendo.bind($("body"), viewModel);
+
+
+    // update the view model after some time.
+    setTimeout(function(){
+        viewModel.get("people").push({
+            name: "Mystery Guy",
+            hairColor: "Black"
+        });
+        viewModel.set("dataTitle", "My weird friends");
+        console.log("I have added mystery guy and changed the caption.");
+    }, 1200);
+</script>
+
+</body>
+</html>

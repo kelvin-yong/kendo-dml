@@ -1,0 +1,80 @@
+<!--
+list04.html
+Basic MVVM
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>ListView Demo 4</title>
+</head>
+<body>
+
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+            <a class="nav-button" data-align="right" data-role="button" data-icon="refresh"></a>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-model="mobileListViewModel" data-role="view" data-layout="main-layout" id="mobile-listview-events" data-title="ListView Demo 4">
+    <form data-bind="events: { submit: add }">
+        <ul data-role="listview" data-style="inset" data-type="group">
+            <li>
+                Add new item
+                <ul>
+                    <li><label>Add item: <input type="text" placeholder="item name&hellip;" data-bind="value: newItemValue" /></label></li>
+                </ul>
+                <button type="submit" class="km-button" style="width: 100%; margin: 1em 0; font-weight: bold; font-size: 1.1em;"><span class="km-text">Add</span></button>
+            </li>
+
+            <li>
+                Items:
+                <ul data-role="listview" data-bind="source: source, events { click: onClick }"></ul>
+            </li>
+        </ul>
+    </form>
+</div>
+
+<script>
+    var mobileListViewModel = kendo.observable({
+        source: [ "foo", "bar" ],
+        newItemValue: "",
+        add: function(e) {
+            var val = this.get("newItemValue");
+            if (val) {
+                this.source.push(val);
+                this.set("newItemValue", "");
+            }
+
+            $("#listview-new-item").blur();
+            e.preventDefault();
+        },
+
+        onClick: function(e) {
+            console.log("Click");
+        }
+    });
+</script>
+
+<style scoped>
+    .km-root .console {
+        background-color: transparent;
+        border: 0;
+        margin: 1.4em 1em;
+        overflow: hidden;
+        height: auto;
+    }
+</style>
+
+<script>
+    window.kendoMobileApplication = new kendo.mobile.Application(document.body);
+</script>
+</body>
+</html>

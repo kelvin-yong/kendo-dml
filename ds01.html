@@ -1,0 +1,92 @@
+<!--
+ds01.html - Local Datasource
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>DataSource Demo 1</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="DataSource Demo 1" data-layout="main-layout">
+    <table id="movies">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Rating</th>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script id="template" type="text/x-kendo-template">
+    <tr>
+        <td>#= rank #</td>
+        <td>#= rating #</td>
+        <td>#= title #</td>
+        <td>#= year #</td>
+    </tr>
+</script>
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+    var doSpeedProfile = true;
+
+    // create a template using the above definition
+    var template = kendo.template($("#template").html());
+
+    var movies = [
+        { "rank": 1,  "rating": 9.2, "year": 1994, "title": "The Shawshank Redemption" },
+        { "rank": 2,  "rating": 9.2, "year": 1972, "title": "The Godfather" },
+        { "rank": 3,  "rating": 9,   "year": 1974, "title": "The Godfather: Part II" },
+        { "rank": 4,  "rating": 8.9, "year": 1966, "title": "Il buono, il brutto, il cattivo." },
+        { "rank": 5,  "rating": 8.9, "year": 1994, "title": "Pulp Fiction" },
+        { "rank": 6,  "rating": 8.9, "year": 1957, "title": "12 Angry Men" },
+        { "rank": 7,  "rating": 8.9, "year": 1993, "title": "Schindler's List" },
+        { "rank": 8,  "rating": 8.8, "year": 1975, "title": "One Flew Over the Cuckoo's Nest" },
+        { "rank": 9,  "rating": 8.8, "year": 2010, "title": "Inception" },
+        { "rank": 10, "rating": 8.8, "year": 2008, "title": "The Dark Knight" }
+    ];
+
+    var dataSource = new kendo.data.DataSource({
+        data: movies,
+        change: function() { // subscribe to the CHANGE event of the data source
+            $("#movies tbody").html(kendo.render(template, this.view())); // populate the table
+            if (doSpeedProfile) {
+                console.time("Render template 50000 times, useWithBlock=true");
+                var v = this.view();
+                for (var i=0; i < 50000; i++) {
+                    kendo.render(template, v);
+                }
+                console.timeEnd("Render template 50000 times, useWithBlock=true");
+            }
+        }
+    });
+
+    // read data from the "movies" array
+    dataSource.read();
+</script>
+
+</body>
+</html>

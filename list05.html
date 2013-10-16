@@ -1,0 +1,71 @@
+<!--
+list05.html
+Endless scrolling example, local data
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>ListView Demo 5</title>
+</head>
+<body>
+
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+            <a class="nav-button" data-align="right" data-role="button" data-icon="refresh"></a>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" data-title="ListView Demo 5" data-layout="main-layout">
+    <ul data-role="listview" data-source="foo" data-endless-scroll="true" data-template="foo-template" data-item-change="itemChange">
+    </ul>
+</div>
+<script type="text/x-kendo-template" id="foo-template">
+    #: name # - #: (new Date(get("modified"))).toString()#
+</script>
+
+<script>
+    var i = 0, pageSize = 50, totalRecords = 280;
+
+    // datasource below is customized for demo purposes.
+    var foo = new kendo.data.DataSource({
+        transport: {
+            read: function(options) {
+                console.log(options.data);
+                var max = i + pageSize;
+                if (max>totalRecords) {
+                    max = totalRecords;
+                }
+                var data = [];
+                for (; i < max; i ++) {
+                    data.push({ name: "record " + i, modified: +new Date() });
+                }
+
+                console.log(data.length);
+                options.success(data);
+            }
+        },
+
+        pageSize: pageSize,
+        serverPaging: true,
+        schema: {
+            total: function() { return totalRecords; }
+        }
+    });
+
+    function itemChange(e) {
+        //console.log(e);
+    }
+
+    new kendo.mobile.Application();
+</script>
+
+</body>
+</html>

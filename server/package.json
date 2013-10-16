@@ -1,0 +1,10 @@
+{
+	"name": "SimpleServer",
+  	"version": "0.0.1",
+  	"description": "A Simple HTTP Server for Kendo UI Datasource",
+  	"author": "Kelvin Yong",
+  	"private": true,
+  	"dependencies": {
+    	"connect": ">= 2.8.0"
+  	}
+}

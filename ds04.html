@@ -1,0 +1,116 @@
+<!--
+ds04.html - Remote Datasource
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>DataSource Demo 4</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="DataSource Demo 4" data-layout="main-layout">
+    <ul data-role="buttongroup" data-index="0" data-select="onSelect">
+        <li>All Movies</li>
+        <li>Cartoons</li>
+        <li>Thrillers</li>
+    </ul>
+
+    <table id="movies">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Rating</th>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script id="template" type="text/x-kendo-template">
+    <tr>
+        <td>#= rank #</td>
+        <td>#= rating #</td>
+        <td>#= title #</td>
+        <td>#= year #</td>
+    </tr>
+</script>
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+
+    // create a template using the above definition
+    var template = kendo.template($("#template").html());
+
+    var baseServiceURL = "http://localhost:7100/";
+
+    var dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                type: "POST",
+
+                url: function(options){
+                    console.log("Options: ", options);
+                    return baseServiceURL;
+                },
+
+                dataType: "json"
+            }
+        },
+
+        // events
+        change: function(e) {
+            var items = this.view();
+            console.log('%d items read', items.length);
+            $("#movies tbody").html(kendo.render(template, items));
+        },
+
+        error: function(e) {
+            console.log("Cannot load movies.json");
+        },
+
+        requestStart: function(e) {
+            console.log("Request started");
+        },
+
+        requestEnd: function(e) {
+            console.log("Request ended");
+        }
+    });
+
+    // read data from the "movies" array
+    dataSource.read();
+
+    function onSelect(e) {
+        var index = this.current().index();
+        console.log(index);
+        switch (index) {
+            case 0: dataSource.read(); break;
+            case 1: dataSource.read({movietype: "cartoon"}); break;
+            case 2: dataSource.read({movietype: "thriller"}); break;
+        }
+    }
+
+</script>
+
+</body>
+</html>

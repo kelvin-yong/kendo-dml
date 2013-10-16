@@ -1,0 +1,90 @@
+<!--
+mvvm02.html
+MVVM: Adding a person
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/kendo.mobile.all.min.css">
+    <script src="scripts/libs/jquery.min.js" ></script>
+    <script src="scripts/libs/kendo.mobile.min.js" ></script>
+    <title>MVVM Demo 2</title>
+</head>
+
+<body>
+<!-- Lay out -->
+<div data-role="layout" data-id="main-layout">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span data-role="view-title"></span>
+        </div>
+    </div>
+</div>
+
+<!-- views -->
+<div data-role="view" id="home-view" data-title="MVVM Demo 2" data-layout="main-layout" data-model="viewModel">
+    <table>
+        <caption data-bind="text: dataTitle"></caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Hair Color</th>
+            <th>Favorite Food</th>
+        </tr>
+        </thead>
+        <tbody data-template="row-template1" data-bind="source: people"></tbody>
+    </table>
+    <!-- new form to add a person -->
+    <hr/>
+    <form>
+        <header>Add a Person</header>
+        <input type="text" name="personName" placeholder="Name" data-bind="value: personName" /><br />
+        <input type="text" name="personHairColor" placeholder="Hair Color" data-bind="value: personHairColor" /><br />
+        <input type="text" name="personFavFood" placeholder="Favorite Food" data-bind="value: personFavFood" /><br />
+        <button type="button" data-bind="click: addPerson">Add</button>
+    </form>
+</div>
+
+<script id="row-template1" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: hairColor"></td>
+        <td data-bind="text: favoriteFood"></td>
+    </tr>
+</script>
+
+
+<script>
+    // initialise the app
+    var _app = new kendo.mobile.Application(document.body);
+
+    // create the viewModel
+    var viewModel = kendo.observable({
+        dataTitle: "My friends",
+        people:[
+            {name: "John", hairColor: "Gray", favoriteFood: "Burger"},
+            {name: "Bryan", hairColor: "Brown", favoriteFood: "Steak"},
+            {name: "Jennifer", hairColor: "Brown", favoriteFood: "Salad"}
+        ],
+
+        // variables for the form field
+        personName: "",
+        personHairColor: "",
+        personFavFood: "",
+
+        // function for adding the person
+        addPerson: function () {
+            this.get("people").push({
+                name: this.get("personName"),
+                hairColor: this.get("personHairColor"),
+                favoriteFood: this.get("personFavFood")
+            });
+            this.set("personName", "");
+            this.set("personHairColor", "");
+            this.set("personFavFood", "");
+        }
+    });
+</script>
+
+</body>
+</html>
