@@ -37,7 +37,7 @@ Kendo MVVM is an implementation of the MVVM pattern which seamlessly integrates 
 
 - `mvvm03.html` - In this example, we are now able to delete a person from our data.
 
-- `mvvm04.html` - This is similar to `mvvm03.html`, mvvm04.html. We used **data-value-update="keyup"** for the text inputs. We have also explicitly made the array to contain observable objects, but this is not necessary according to [Kendo documentation](http://docs.kendoui.com/api/framework/observableobject). 
+- `mvvm04.html` - This is similar to `mvvm03.html`. We used **data-value-update="keyup"** for the text inputs. We have also explicitly made the array to contain observable objects, but this is not necessary according to [Kendo documentation](http://docs.kendoui.com/api/framework/observableobject). 
 
 > **Important**: Complex fields are automatically wrapped in nested ObservableObject instances. Array fields are wrapped as kendo.data.ObservableArray objects. The change event of the child objects will bubble to the parent ObservableObject. Fields, which name are prefixed with an underscore will not be wrapped.
 
